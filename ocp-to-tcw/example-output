@@ -1,0 +1,57 @@
+./ocp-to-tcw.sh -k /home/adam/Downloads/oms-mcd-openrc.sh -p adam-test-script -u adam-test-script -a adam-test-script -n adam-test-script --org-id 47645 
+[INFO] Parsed admin credentials from keystonerc:
+       OS_USERNAME_ADMIN=admin
+       OS_PROJECT_NAME_ADMIN=oms-mcd
+       OS_AUTH_URL_ADMIN=https://keystone.fremont.cloud.onemindservices.com/v3
+       OS_REGION_NAME_ADMIN=RegionOne
+[INFO] Creating project 'adam-test-script'...
++-------------+----------------------------------+
+| Field       | Value                            |
++-------------+----------------------------------+
+| description |                                  |
+| domain_id   | default                          |
+| enabled     | True                             |
+| id          | 06a0366fd130490da0e4fa0cce45e7ff |
+| is_domain   | False                            |
+| name        | adam-test-script                 |
+| options     | {}                               |
+| parent_id   | default                          |
+| tags        | []                               |
++-------------+----------------------------------+
+[INFO] Creating user 'adam-test-script' with password: maidcosicdd
++---------------------+----------------------------------+
+| Field               | Value                            |
++---------------------+----------------------------------+
+| default_project_id  | 06a0366fd130490da0e4fa0cce45e7ff |
+| domain_id           | default                          |
+| enabled             | True                             |
+| id                  | 3f177a8d925e431d881fa0112ac12121 |
+| name                | adam-test-script                 |
+| options             | {}                               |
+| password_expires_at | None                             |
++---------------------+----------------------------------+
+[INFO] Final password for user 'adam-test-script': maidcosicdd==
+[INFO] Assigning role 'member' to user 'adam-test-script' in project 'adam-test-script'...
+[INFO] Assigning role 'load-balancer_member' to user 'adam-test-script' in project 'adam-test-script'...
+[INFO] Setting compute quotas on project 'adam-test-script'...
+This command currently defaults to '--force' when modifying network quotas. This behavior will change in a future release. Consider explicitly providing '--force' or '--no-force' options to avoid changes in behavior.
+[INFO] Setting volume quotas on project 'adam-test-script'...
+This command currently defaults to '--force' when modifying network quotas. This behavior will change in a future release. Consider explicitly providing '--force' or '--no-force' options to avoid changes in behavior.
+[INFO] Setting network quotas on project 'adam-test-script'...
+This command currently defaults to '--force' when modifying network quotas. This behavior will change in a future release. Consider explicitly providing '--force' or '--no-force' options to avoid changes in behavior.
+[INFO] Creating application credential 'adam-test-script' by impersonating 'adam-test-script'...
+[INFO] Created app cred ID: 0977ef21ee034318a31489a47100bc32
+[INFO] Created app cred SECRET: YbyPbgNbVDT7I3Qdsmkvmfpoivm9f0dvfd
+[INFO] Creating Taikun OpenStack cloud credential: 'adam-test-script'
+[DEBUG] Running taikun command: taikun cloud-credential openstack add adam-test-script --url https://keystone.fremont.cloud.onemindservices.com/v3 --domain Default --region RegionOne --username adam-test-script --password maidcosicdd== --public-network public --continent Europe --project adam-test-script -o 47645
+[INFO] Created Taikun cloud credential with ID=53384
+[INFO] Done!
+----------------------------------------------------
+[INFO] Summary:
+  OpenStack user: adam-test-script
+    Password: a1ynlU9Kbh0hNKOEpVuwCw==
+  App Cred: adam-test-script
+    ID: 0977ef21ee034318a31489a47100bc32
+    SECRET: YbyPbgNbVDT7I3Qdsmkvmfpoivm9f0dvfd
+  Taikun Credential: adam-test-script (ID=53384)
+----------------------------------------------------
