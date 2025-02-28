@@ -49,6 +49,7 @@ A Bash script that automates:
 
 ## Usage
 
+```bash
 ./ocp-to-tcw.sh \
   -k <KEYSTONERC_FILE> \
   -p <PROJECT_NAME> \
@@ -56,9 +57,11 @@ A Bash script that automates:
   -a <APP_CRED_NAME> \
   -n <TAIKUN_CRED_NAME> \
   [options]
+```
 
 ## Example
 
+```bash
 ./ocp-to-tcw.sh \
   -k /home/adam/keystonerc_admin \
   -p dev-project \
@@ -69,4 +72,4 @@ A Bash script that automates:
   --public-network external \
   --org-id 42 \
   --skip-tls
-
+```
