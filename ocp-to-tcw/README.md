@@ -2,9 +2,9 @@
 
 This repository contains a single Bash script, **`ott.sh`**, which automates:
 
-1. **Sourcing OpenStack and Taikun credentials** from a **single** config file (e.g., `credentials.env`).  
+1. **Sourcing OpenStack and Taikun credentials** from a **single** config file (e.g., `ott.conf`).  
 2. **Creating or verifying** an OpenStack **project** and **user** (with forced password reset if the user exists).  
-3. **Setting quotas** on the project (with values specified in `credentials.env`, or defaults if not set).  
+3. **Setting quotas** on the project (with values specified in `ott.conf`, or defaults if not set).  
 4. **Creating** an **application credential** for the user by impersonating them.  
 5. **Optionally creating** a **Taikun** organization if requested.
 6. **Creating** a **Taikun** **cloud credential** referencing the newly generated application credential.
@@ -55,7 +55,7 @@ This approach lets you keep **all** relevant credentials (OpenStack, Taikun) and
 
 ```bash
   ./ott.sh \
-  --config-file credentials.env \
+  --config-file ott.conf \
   -p my-project \
   -u my-user \
   -a my-app-cred \
