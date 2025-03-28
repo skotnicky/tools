@@ -1,61 +1,77 @@
-# Taikun Command line interface (CLI)
-Manage resources in [Taikun](https://taikun.cloud) from the command line.
+# OCP-to-TCW Script
 
-## Getting started
-You can take a look in the quickstart folder for some inspiration on some Taikun CLI scripting inspiration. 
+This repository contains a single Bash script, **`ott.sh`**, which automates:
 
-### Downloading the binary
-To download the CLI, head to the [latest release page](https://github.com/itera-io/taikun-cli/releases/latest).
-Scroll down to the Assets section and select the binary for your architecture.
+1. **Sourcing OpenStack and Taikun credentials** from a **single** config file (e.g., `ott.conf`).  
+2. **Creating or verifying** an OpenStack **project** and **user** (with forced password reset if the user exists).  
+3. **Setting quotas** on the project (with values specified in `ott.conf`, or defaults if not set).  
+4. **Creating** an **application credential** for the user by impersonating them.  
+5. **Optionally creating** a **Taikun** organization if requested.
+6. **Creating** a **Taikun** **cloud credential** referencing the newly generated application credential.
 
-### Signing in to Taikun
-The Taikun CLI reads environment variables to authenticate to Taikun.
+This approach lets you keep **all** relevant credentials (OpenStack, Taikun) and quota values in **one** environment file – no manual `source` of a keystonerc or separate configs.
 
-To authenticate with your Taikun account, set the following environment variables:
+---
+
+## Prerequisites
+
+1. **OpenStack CLI** installed and configured locally (`openstack` command).  
+2. **Taikun CLI** installed and configured (`taikun` command).  
+3. A single **environment file** (e.g., `ott.conf`) which exports:
+
+   - **OpenStack** env vars (e.g. `OS_USERNAME`, `OS_PASSWORD`, `OS_PROJECT_NAME`, `OS_AUTH_URL`, etc.).  
+   - **Taikun** env vars (e.g. `TAIKUN_AUTH_MODE`, `TAIKUN_ACCESS_KEY`, `TAIKUN_SECRET_KEY`, `TAIKUN_API_HOST`).  
+   - **Optional** `QUOTA_*` variables for adjusting quotas (e.g. `QUOTA_CORES`, `QUOTA_RAM`, etc.). Defaults are used if omitted.
+
+---
+
+## Usage
+
+1. **Create/Edit** `ott.conf` (or any file you want), for example:
+
+   ```bash
+   # Taikun credentials
+   export TAIKUN_AUTH_MODE="token"
+   export TAIKUN_ACCESS_KEY="my-taikun-access-key"
+   export TAIKUN_SECRET_KEY="my-taikun-secret-key"
+   export TAIKUN_API_HOST="api.taikun.cloud"
+
+   # OpenStack credentials
+   export OS_USERNAME="admin"
+   export OS_PASSWORD="admin-secret"
+   export OS_PROJECT_NAME="admin"
+   export OS_USER_DOMAIN_NAME="Default"
+   export OS_PROJECT_DOMAIN_NAME="Default"
+   export OS_AUTH_URL="https://openstack.example.com:5000/v3"
+   export OS_REGION_NAME="RegionOne"
+
+   # Optional Quota overrides
+   export QUOTA_CORES="200"
+   export QUOTA_RAM="1024000"
+   # etc.
+   ```
+
+## Run it
+
+```bash
+  ./ott.sh \
+  --config-file ott.conf \
+  -p my-project \
+  -u my-user \
+  -a my-app-cred \
+  -n my-taikun-cred \
+  --org-name myorg \
+  --org-full-name "My Org FullName" \
+  --org-email "myorg@example.com" \
 ```
-TAIKUN_EMAIL
-TAIKUN_PASSWORD
-```
 
-To authenticate with Keycloak, set the following environment variables:
-```
-TAIKUN_KEYCLOAK_EMAIL
-TAIKUN_KEYCLOAK_PASSWORD
-```
-
-The default API host is `api.taikun.cloud`.
-To override it, set the following environment variable:
-```
-TAIKUN_API_HOST (default value is: api.taikun.cloud)
-```
-
-Run the following command to check whether you are properly authenticated.
-```sh
-taikun whoami
-```
-
-### Setting up autocompletion
-Autocompletion is available for the following shells.
-- Bash
-- Zsh
-- Fish
-- PowerShell
-
-The command `taikun completion <shell>` generates an autocompletion script for
-the specified shell. For instructions on how to use the generated script, see
-the help command of the corresponding shell.
-
-For example, `taikun completion bash -h` provides instructions on how to set up
-autocompletion for the Bash shell.
-
-## Command overview
-To have an overview of all the commands available, see [the generated command
-tree](COMMAND_TREE.md).
-
-## Help
-To get information on how to use a command, type `taikun [command] --help` or
-`taikun [command] -h` for short.
-
-## Contributing
-Please check out the [contributing page](.github/CONTRIBUTING.md) for instructions on how
-to contribute to this project.
+- `-p <PROJECT_NAME>`: The OpenStack project to create or verify (e.g. `"my-project"`).  
+   - `-u <USER_NAME>`: The OpenStack user to create or verify.  
+   - `-a <APP_CRED_NAME>`: Name of the application credential for the user.  
+   - `-n <TAIKUN_CRED_NAME>`: Name of the Taikun cloud credential.  
+   - **Creating a new org**:  
+     - Use `--org-name <SHORT_NAME>` and `--org-full-name <FULL_NAME>`.  
+     - Add any optional fields like `--org-email`, `--org-address`, etc.  
+   - **Using an existing org**:  
+     - Pass `--org-id <ID>` if you already have an org and don’t want to create a new one.  
+     - If both `--org-id` and `--org-name` are given, the newly created org will override the ID.
