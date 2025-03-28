@@ -280,11 +280,11 @@ if openstack user show "$USER_NAME" &>/dev/null; then
   echo "[INFO] User '$USER_NAME' exists. Resetting password..."
   openstack user set --password "$USER_PASS" "$USER_NAME"
 else
-  echo "[INFO] Creating user '$USER_NAME' with password: $USER_PASS"
+  echo "[INFO] Creating user '$USER_NAME'"
   openstack user create --project "$PROJECT_NAME" --password "$USER_PASS" "$USER_NAME"
 fi
 
-echo "[INFO] User '$USER_NAME' => password=$USER_PASS"
+echo "[INFO] User '$USER_NAME' created"
 
 # Roles
 ROLES=( "member" "load-balancer_member" )
@@ -307,6 +307,7 @@ openstack quota set \
   --instances "$QUOTA_INSTANCES" \
   --server-groups "$QUOTA_SERVER_GROUPS" \
   --server-group-members "$QUOTA_SERVER_GROUP_MEMBERS" \
+  --force \
   "$PROJECT_NAME"
 
 echo "[INFO] Setting volume quotas on project '$PROJECT_NAME'..."
@@ -314,6 +315,7 @@ openstack quota set \
   --volumes "$QUOTA_VOLUMES" \
   --snapshots "$QUOTA_SNAPSHOTS" \
   --gigabytes "$QUOTA_GIGABYTES" \
+  --force \
   "$PROJECT_NAME"
 
 echo "[INFO] Setting network quotas on project '$PROJECT_NAME'..."
@@ -325,6 +327,7 @@ openstack quota set \
   --floating-ips "$QUOTA_FLOATING_IPS" \
   --secgroups "$QUOTA_SECGROUPS" \
   --secgroup-rules "$QUOTA_SECGROUP_RULES" \
+  --force \
   "$PROJECT_NAME"
 
 #######################################
@@ -352,7 +355,7 @@ APP_CRED_OUT=$(
 APP_CRED_ID=$(echo "$APP_CRED_OUT" | sed -n '1p')
 APP_CRED_SECRET=$(echo "$APP_CRED_OUT" | sed -n '2p')
 
-echo "[INFO] Created app cred: ID=$APP_CRED_ID, SECRET=$APP_CRED_SECRET"
+echo "[INFO] Created app cred: ID=$APP_CRED_ID"
 
 #######################################
 # 7) Create Taikun cloud credential
@@ -363,11 +366,10 @@ TAIKUN_CLOUD_CMD=(
   taikun cloud-credential openstack add
   "$TAIKUN_CRED_NAME"
   --url "$OS_AUTH_URL"
-  --domain "$OS_USER_DOMAIN_NAME"
-  --region "$OS_REGION_NAME"
-  --username "$USER_NAME"
-  --password "$USER_PASS"
+  --appcredid "$APP_CRED_ID"
+  --appcredsecret "$APP_CRED_SECRET"
   --public-network "$PUBLIC_NETWORK"
+  --region "$OS_REGION_NAME"
   --continent "$CONTINENT"
   --project "$PROJECT_NAME"
   -o "$TAIKUN_ORG_ID"
